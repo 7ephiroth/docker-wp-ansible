@@ -1,0 +1,26 @@
+---
+# tasks file for ansible-dockerized-wordpress
+- name: "Launch database container"
+  become: yes
+  docker_container:
+    name: db
+    image: mysql
+    state: started
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ DB_MYSQL_ROOT_PASSWORD }}"
+      MYSQL_DATABASE: "{{ DB_MYSQL_DATABASE }}"
+      MYSQL_USER: "{{ DB_MYSQL_USER}}"
+      MYSQL_PASSWORD: "{{ DB_MYSQL_PASSWORD }}"
+
+- name: "Launch wordpress container"
+  become: yes
+  docker_container:
+    name: wordpress
+    image: wordpress
+    state: started
+    links:
+      - "db:mysql"
+    ports:
+      - 2222:80
+      - "0.0.0.0:2222:80/tcp"
+...
